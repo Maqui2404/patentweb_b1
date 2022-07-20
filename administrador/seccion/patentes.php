@@ -13,10 +13,11 @@ $arch = (isset($_FILES['arch']['name'])) ? $_FILES['arch']['name'] : "";
 $accion = (isset($_POST['accion'])) ? $_POST['accion'] : "";
 
 include("../config/bd.php");
-
+//.NET
 switch ($accion) {
     case "Agregar":
-        $sentenciaSQL = $conexion->prepare("INSERT INTO patente_i (denominacion_p,titular_p,colaboradores_p,pais_p,clasificacion_p,link_p,institucion_p,arch_p) VALUES (:denominacion_p,:titular_p,:colaboradores_p,:pais_p,:clasificacion_p,:link_p,:institucion_p,:arch_p);");
+        $sentenciaSQL = $conexion->prepare("INSERT INTO patente_i (denominacion_p,titular_p,colaboradores_p,pais_p,clasificacion_p,link_p,institucion_p,arch_p) 
+        VALUES (:denominacion_p,:titular_p,:colaboradores_p,:pais_p,:clasificacion_p,:link_p,:institucion_p,:arch_p);");
         $sentenciaSQL->bindParam(':denominacion_p', $txtDENOMINACION);
         $sentenciaSQL->bindParam(':titular_p', $txtTITULAR);
         $sentenciaSQL->bindParam(':colaboradores_p', $txtCOLABORADORES);
@@ -35,18 +36,16 @@ switch ($accion) {
         $sentenciaSQL->bindParam(':arch_p', $nombreArchivo);
         $sentenciaSQL->execute();
 
-        
+
         header("Location:patentes.php");
         break;
 
 
     case "Modificar":
-        //if ($txtDENOMINACION != "") {  
         $sentenciaSQL = $conexion->prepare("UPDATE patente_i SET denominacion_p=:denominacion_p WHERE id_p=:id_p");
         $sentenciaSQL->bindParam(':denominacion_p', $txtDENOMINACION);
         $sentenciaSQL->bindParam(':id_p', $txtID);
         $sentenciaSQL->execute();
-        //}
 
 
         $sentenciaSQL = $conexion->prepare("UPDATE patente_i SET titular_p=:titular_p WHERE id_p=:id_p");
@@ -137,7 +136,6 @@ switch ($accion) {
         $arch = $patente['arch_p'];
 
 
-        //echo "Presionado botón Seleccionar";
         break;
     case "Borrar":
 
@@ -234,13 +232,13 @@ $listaPatentes = $sentenciaSQL->fetchAll(PDO::FETCH_ASSOC);
 
                 <div class="form-group">
                     <label for="arch">Archivo</label>
-                    
+
                     <br>
 
                     <?php
-                        if($arch!=""){
+                    if ($arch != "") {
                     ?>
-                    <img class="img-thumbnail rounded" src="../../archivos/<?php echo $arch; ?>" width="50" alt="">
+                        <img class="img-thumbnail rounded" src="../../archivos/<?php echo $arch; ?>" width="50" alt="">
                     <?php } ?>
 
 
@@ -249,9 +247,9 @@ $listaPatentes = $sentenciaSQL->fetchAll(PDO::FETCH_ASSOC);
 
 
                 <div class="btn-group" role="group" aria-label="">
-                    <button type="submit" name="accion" <?php echo ($accion=="Seleccionar")?"disabled":""; ?> value="Agregar" class="btn btn-success">Agregar</button>
-                    <button type="submit" name="accion" <?php echo ($accion!="Seleccionar")?"disabled":""; ?> value="Modificar" class="btn btn-warning">Modificar</button>
-                    <button type="submit" name="accion" <?php echo ($accion!="Seleccionar")?"disabled":""; ?> value="Cancelar" class="btn btn-info">Cancelar</button>
+                    <button type="submit" name="accion" <?php echo ($accion == "Seleccionar") ? "disabled" : ""; ?> value="Agregar" class="btn btn-success">Agregar</button>
+                    <button type="submit" name="accion" <?php echo ($accion != "Seleccionar") ? "disabled" : ""; ?> value="Modificar" class="btn btn-warning">Modificar</button>
+                    <button type="submit" name="accion" <?php echo ($accion != "Seleccionar") ? "disabled" : ""; ?> value="Cancelar" class="btn btn-info">Cancelar</button>
                 </div>
             </form>
         </div>
@@ -294,7 +292,7 @@ $listaPatentes = $sentenciaSQL->fetchAll(PDO::FETCH_ASSOC);
                     <td><?php echo $patente['institucion_p']; ?></td>
                     <td>
                         <img src="../../archivos/<?php echo $patente['arch_p']; ?>" width="50" alt="">
-                        </td>
+                    </td>
                     <td>
                         <form method="post">
                             <input type="hidden" name="txtID" id="image.png" value="<?php echo $patente['id_p']; ?>" />
