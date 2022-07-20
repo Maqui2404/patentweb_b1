@@ -36,7 +36,7 @@ else{
             <a class="nav-item nav-link active" href="#">Admin </a>
             <a class="nav-item nav-link" href="<?php echo $url;?>/administrador/inicio.php">Inicio</a>
             <a class="nav-item nav-link" href="<?php echo $url;?>/administrador/seccion/patentes.php">Patentes</a>
-            <a class="nav-item nav-link" href="<?php echo $url;?>/administrador/seccion/listar_filtrar">Listar y Filtrar</a>
+            <a class="nav-item nav-link" href="<?php echo $url;?>/administrador/seccion/listar_filtrar.php">Listar y Filtrar</a>
             <a class="nav-item nav-link" href="<?php echo $url;?>">Ver sitio web</a>
             <a class="nav-item nav-link" href="<?php echo $url;?>/administrador/seccion/cerrar.php">Cerrar</a>
 
