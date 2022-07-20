@@ -1,7 +1,25 @@
 <?php
+
+
+//SESIÓN
+session_start();
 if($_POST){
-    header('Location:inicio.php');
+    if(($_POST['usuario']=="admin")&&($_POST['contrasenia']=="admin")){
+        $_SESSION['usuario']="ok";
+        $_SESSION['nombreUsuario']="admin";
+        header('Location:inicio.php');
+    }else{
+        $mensaje="Error: El usuario y/o contraseña son incorrectos";
+    }
+
+
+
 }
+
+
+
+
+//-----------
 ?>
 <!doctype html>
 <html lang="en">
@@ -28,11 +46,15 @@ if($_POST){
                         Login
                     </div>
                     <div class="card-body">
+                        <?php if(isset($mensaje)){?>
+                        <div class="alert alert-danger" role="alert">
+                            <?php echo $mensaje; ?>
+                        </div>
+                        <?php } ?>
                         <form method="POST">
                         <div class = "form-group">
-                        <label>Email address</label>
-                        <input type="email" class="form-control" name="email" placeholder="Enter email">
-                        <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+                        <label>USER</label>
+                        <input type="text" class="form-control" name="usuario" placeholder="Enter user">
                         </div>
                         <div class="form-group">
                         <label>Password</label>
