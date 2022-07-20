@@ -1,8 +1,8 @@
 <?php
 $host="localhost";
-$bd="patentweb";
-$usuario="root";
-$contrasenia="";
+$bd="id19299328_patentweb";
+$usuario="id19299328_root";
+$contrasenia="eVmKU5Rz=MA6jJ#@";
 
 try {
     $conexion=new PDO("mysql:host=$host;dbname=$bd",$usuario,$contrasenia);
