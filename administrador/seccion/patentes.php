@@ -1,4 +1,4 @@
-<?php include("../template/navbar_admin.php")?>
+<?php include("../template/navbar_admin.php") ?>
 <?php
 
 $txtID = (isset($_POST['txtID'])) ? $_POST['txtID'] : "";
@@ -14,17 +14,17 @@ $accion = (isset($_POST['accion'])) ? $_POST['accion'] : "";
 
 include("../config/bd.php");
 
-switch($accion) {
+switch ($accion) {
     case "Agregar":
         $sentenciaSQL = $conexion->prepare("INSERT INTO patente_i (denominacion_p,titular_p,colaboradores_p,pais_p,clasificacion_p,link_p,institucion_p,arch_p) VALUES (:denominacion_p,:titular_p,:colaboradores_p,:pais_p,:clasificacion_p,:link_p,:institucion_p,:arch_p);");
-        $sentenciaSQL->bindParam(':denominacion_p',$txtDENOMINACION);
-        $sentenciaSQL->bindParam(':titular_p',$txtTITULAR);
-        $sentenciaSQL->bindParam(':colaboradores_p',$txtCOLABORADORES);
-        $sentenciaSQL->bindParam(':pais_p',$txtPAIS);
-        $sentenciaSQL->bindParam(':clasificacion_p',$txtCLASIFICACION);
-        $sentenciaSQL->bindParam(':link_p',$txtLINK);
-        $sentenciaSQL->bindParam(':institucion_p',$txtINSTITUCION);
-        $sentenciaSQL->bindParam(':arch_p',$arch);
+        $sentenciaSQL->bindParam(':denominacion_p', $txtDENOMINACION);
+        $sentenciaSQL->bindParam(':titular_p', $txtTITULAR);
+        $sentenciaSQL->bindParam(':colaboradores_p', $txtCOLABORADORES);
+        $sentenciaSQL->bindParam(':pais_p', $txtPAIS);
+        $sentenciaSQL->bindParam(':clasificacion_p', $txtCLASIFICACION);
+        $sentenciaSQL->bindParam(':link_p', $txtLINK);
+        $sentenciaSQL->bindParam(':institucion_p', $txtINSTITUCION);
+        $sentenciaSQL->bindParam(':arch_p', $arch);
         $sentenciaSQL->execute();
         break;
 
@@ -35,11 +35,21 @@ switch($accion) {
     case "Cancelar":
         echo "Presionado botón Cancelar";
         break;
+    case "Seleccionar":
+        //echo "Presionado botón Seleccionar";
+        break;
+    case "Borrar":
+        $sentenciaSQL = $conexion->prepare("DELETE FROM patente_i WHERE id_p=:id_p");
+        $sentenciaSQL->bindParam(':id_p', $txtID);
+
+        $sentenciaSQL->execute();
+        //echo "Presionado botón Borrar";
+        break;
 }
 
-$sentenciaSQL=$conexion->prepare("SELECT * FROM patente_i");
+$sentenciaSQL = $conexion->prepare("SELECT * FROM patente_i");
 $sentenciaSQL->execute();
-$listaPatentes=$sentenciaSQL->fetchAll(PDO::FETCH_ASSOC);
+$listaPatentes = $sentenciaSQL->fetchAll(PDO::FETCH_ASSOC);
 
 
 ?>
@@ -141,33 +151,33 @@ $listaPatentes=$sentenciaSQL->fetchAll(PDO::FETCH_ASSOC);
             </tr>
         </thead>
         <tbody>
-            <?php foreach($listaPatentes as $patente) { ?>
-            <tr>
+            <?php foreach ($listaPatentes as $patente) { ?>
+                <tr>
 
-                <td><?php echo $patente['id_p']; ?></td>
-                <td><?php echo $patente['denominacion_p']; ?></td>
-                <td><?php echo $patente['titular_p']; ?></td>
-                <td><?php echo $patente['colaboradores_p']; ?></td>
-                <td><?php echo $patente['pais_p']; ?></td>
-                <td><?php echo $patente['clasificacion_p']; ?></td>
-                <td><?php echo $patente['link_p']; ?></td>
-                <td><?php echo $patente['institucion_p']; ?></td>
-                <td><?php echo $patente['arch_p']; ?></td>
-                <td>
-                    
-                Seleccionar | Borrar
-                
-                <form method="post">
-                    <input type="hidden" name="txtID" id="image.png" value="<?php echo $patente['id_p']; ?>"/>
+                    <td><?php echo $patente['id_p']; ?></td>
+                    <td><?php echo $patente['denominacion_p']; ?></td>
+                    <td><?php echo $patente['titular_p']; ?></td>
+                    <td><?php echo $patente['colaboradores_p']; ?></td>
+                    <td><?php echo $patente['pais_p']; ?></td>
+                    <td><?php echo $patente['clasificacion_p']; ?></td>
+                    <td><?php echo $patente['link_p']; ?></td>
+                    <td><?php echo $patente['institucion_p']; ?></td>
+                    <td><?php echo $patente['arch_p']; ?></td>
+                    <td>
 
-                    <input type="submit" name="accion" value="Seleccionar" class="btn btn-primary"/>
+                        Seleccionar | Borrar
 
-                    <input type="submit" name="accion" value="Borrar" class="btn btn-danger"/>
-                </form>
-                
-                </td>
-            </tr>
-            <?php }?>
+                        <form method="post">
+                            <input type="hidden" name="txtID" id="image.png" value="<?php echo $patente['id_p']; ?>" />
+
+                            <input type="submit" name="accion" value="Seleccionar" class="btn btn-primary" />
+
+                            <input type="submit" name="accion" value="Borrar" class="btn btn-danger" />
+                        </form>
+
+                    </td>
+                </tr>
+            <?php } ?>
         </tbody>
     </table>
 </div>
