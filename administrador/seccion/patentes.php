@@ -24,41 +24,144 @@ switch ($accion) {
         $sentenciaSQL->bindParam(':clasificacion_p', $txtCLASIFICACION);
         $sentenciaSQL->bindParam(':link_p', $txtLINK);
         $sentenciaSQL->bindParam(':institucion_p', $txtINSTITUCION);
-        $sentenciaSQL->bindParam(':arch_p', $arch);
+
+
+        $fecha = new DateTime();
+        $nombreArchivo = ($arch != "") ? $fecha->getTimestamp() . "_" . $_FILES["arch"]["name"] : "imagen.jpg";
+        $tmpArchivo = $_FILES["arch"]["tmp_name"];
+        if ($tmpArchivo != "") {
+            move_uploaded_file($tmpArchivo, "../../archivos/" . $nombreArchivo);
+        }
+        $sentenciaSQL->bindParam(':arch_p', $nombreArchivo);
         $sentenciaSQL->execute();
+
+        
+        header("Location:patentes.php");
         break;
 
+
     case "Modificar":
-        echo "Presionado botón Modificar";
+        //if ($txtDENOMINACION != "") {  
+        $sentenciaSQL = $conexion->prepare("UPDATE patente_i SET denominacion_p=:denominacion_p WHERE id_p=:id_p");
+        $sentenciaSQL->bindParam(':denominacion_p', $txtDENOMINACION);
+        $sentenciaSQL->bindParam(':id_p', $txtID);
+        $sentenciaSQL->execute();
+        //}
+
+
+        $sentenciaSQL = $conexion->prepare("UPDATE patente_i SET titular_p=:titular_p WHERE id_p=:id_p");
+        $sentenciaSQL->bindParam(':titular_p', $txtTITULAR);
+        $sentenciaSQL->bindParam(':id_p', $txtID);
+        $sentenciaSQL->execute();
+
+
+        $sentenciaSQL = $conexion->prepare("UPDATE patente_i SET colaboradores_p=:colaboradores_p WHERE id_p=:id_p");
+        $sentenciaSQL->bindParam(':colaboradores_p', $txtCOLABORADORES);
+        $sentenciaSQL->bindParam(':id_p', $txtID);
+        $sentenciaSQL->execute();
+
+
+
+        $sentenciaSQL = $conexion->prepare("UPDATE patente_i SET pais_p=:pais_p WHERE id_p=:id_p");
+        $sentenciaSQL->bindParam(':pais_p', $txtPAIS);
+        $sentenciaSQL->bindParam(':id_p', $txtID);
+        $sentenciaSQL->execute();
+
+
+        $sentenciaSQL = $conexion->prepare("UPDATE patente_i SET clasificacion_p=:clasificacion_p WHERE id_p=:id_p");
+        $sentenciaSQL->bindParam(':clasificacion_p', $txtCLASIFICACION);
+        $sentenciaSQL->bindParam(':id_p', $txtID);
+        $sentenciaSQL->execute();
+
+        $sentenciaSQL = $conexion->prepare("UPDATE patente_i SET link_p=:link_p WHERE id_p=:id_p");
+        $sentenciaSQL->bindParam(':link_p', $txtLINK);
+        $sentenciaSQL->bindParam(':id_p', $txtID);
+        $sentenciaSQL->execute();
+
+
+        $sentenciaSQL = $conexion->prepare("UPDATE patente_i SET institucion_p=:institucion_p WHERE id_p=:id_p");
+        $sentenciaSQL->bindParam(':institucion_p', $txtINSTITUCION);
+        $sentenciaSQL->bindParam(':id_p', $txtID);
+        $sentenciaSQL->execute();
+
+        if ($arch != "") {
+
+            $fecha = new DateTime();
+            $nombreArchivo = ($arch != "") ? $fecha->getTimestamp() . "_" . $_FILES["arch"]["name"] : "imagen.jpg";
+            $tmpArchivo = $_FILES["arch"]["tmp_name"];
+
+            move_uploaded_file($tmpArchivo, "../../archivos/" . $nombreArchivo);
+
+
+
+
+            $sentenciaSQL = $conexion->prepare("SELECT arch_p FROM patente_i WHERE id_p=:id_p");
+            $sentenciaSQL->bindParam(':id_p', $txtID);
+            $sentenciaSQL->execute();
+            $patente = $sentenciaSQL->fetch(PDO::FETCH_LAZY);
+
+            if (isset($patente["arch_p"]) && ($patente["arch_p"] != "imagen.jpg")) {
+                if (file_exists("../../archivos/" . $libro["arch_p"])) {
+                    unlink("../../archivos/" . $patente["arch_p"]);
+                }
+            }
+
+
+
+
+
+            $sentenciaSQL = $conexion->prepare("UPDATE patente_i SET arch_p=:arch_p WHERE id_p=:id_p");
+            $sentenciaSQL->bindParam(':arch_p', $nombreArchivo);
+            $sentenciaSQL->bindParam(':id_p', $txtID);
+            $sentenciaSQL->execute();
+        }
+        header("Location:patentes.php");
         break;
 
     case "Cancelar":
-        echo "Presionado botón Cancelar";
+        header("Location:patentes.php");
         break;
     case "Seleccionar":
         $sentenciaSQL = $conexion->prepare("SELECT * FROM patente_i WHERE id_p=:id_p");
         $sentenciaSQL->bindParam(':id_p', $txtID);
         $sentenciaSQL->execute();
-        $patente=$sentenciaSQL->fetch(PDO::FETCH_LAZY);
+        $patente = $sentenciaSQL->fetch(PDO::FETCH_LAZY);
 
-        $txtDENOMINACION=$patente['denominacion_p'];
-        $txtTITULAR=$patente['titular_p'];
-        $txtCOLABORADORES=$patente['colaboradores_p'];
-        $txtPAIS=$patente['pais_p'];
-        $txtCLASIFICACION=$patente['clasificacion_p'];
-        $txtLINK=$patente['link_p'];
-        $txtINSTITUCION=$patente['institucion_p'];
-        $arch=$patente['arch_p'];
+        $txtDENOMINACION = $patente['denominacion_p'];
+        $txtTITULAR = $patente['titular_p'];
+        $txtCOLABORADORES = $patente['colaboradores_p'];
+        $txtPAIS = $patente['pais_p'];
+        $txtCLASIFICACION = $patente['clasificacion_p'];
+        $txtLINK = $patente['link_p'];
+        $txtINSTITUCION = $patente['institucion_p'];
+        $arch = $patente['arch_p'];
 
 
         //echo "Presionado botón Seleccionar";
         break;
     case "Borrar":
+
+        $sentenciaSQL = $conexion->prepare("SELECT arch_p FROM patente_i WHERE id_p=:id_p");
+        $sentenciaSQL->bindParam(':id_p', $txtID);
+        $sentenciaSQL->execute();
+        $patente = $sentenciaSQL->fetch(PDO::FETCH_LAZY);
+
+        if (isset($patente["arch_p"]) && ($patente["arch_p"] != "imagen.jpg")) {
+            if (file_exists("../../archivos/" . $libro["arch_p"])) {
+                unlink("../../archivos/" . $patente["arch_p"]);
+            }
+        }
+
+
+
+
         $sentenciaSQL = $conexion->prepare("DELETE FROM patente_i WHERE id_p=:id_p");
         $sentenciaSQL->bindParam(':id_p', $txtID);
 
         $sentenciaSQL->execute();
         //echo "Presionado botón Borrar";
+
+        header("Location:patentes.php");
         break;
 }
 
@@ -83,63 +186,72 @@ $listaPatentes = $sentenciaSQL->fetchAll(PDO::FETCH_ASSOC);
 
                 <div class="form-group">
                     <label for="txtID">ID</label>
-                    <input type="text" name="txtID" value="<?php echo $txtID; ?>" class="form-control" id="txtID" placeholder="Enter ID">
+                    <input type="text" require readonly name="txtID" value="<?php echo $txtID; ?>" class="form-control" id="txtID" placeholder="Enter ID">
                 </div>
 
 
                 <div class="form-group">
                     <label for="txtDENOMINACION">DENOMINACION</label>
-                    <input type="text" name="txtDENOMINACION" value="<?php echo $txtDENOMINACION; ?> class="form-control" id="txtDENOMINACION" placeholder="Enter DENOMINACION">
+                    <input type="text" require name="txtDENOMINACION" value="<?php echo $txtDENOMINACION; ?>" class="form-control" id="txtDENOMINACION" placeholder="Enter DENOMINACION">
                 </div>
 
 
                 <div class="form-group">
                     <label for="txtTITULAR">TITULAR</label>
-                    <input type="text" name="txtTITULAR" value="<?php echo $txtTITULAR; ?> class="form-control" id="txtTITULAR" placeholder="Enter TITULAR">
+                    <input type="text" require name="txtTITULAR" value="<?php echo $txtTITULAR; ?>" class="form-control" id="txtTITULAR" placeholder="Enter TITULAR">
                 </div>
 
 
                 <div class="form-group">
                     <label for="txtCOLABORADORES">COLABORADORES</label>
-                    <input type="text" name="txtCOLABORADORES" value="<?php echo $txtCOLABORADORES; ?> class="form-control" id="txtCOLABORADORES" placeholder="Enter COLABORADORES">
+                    <input type="text" name="txtCOLABORADORES" value="<?php echo $txtCOLABORADORES; ?>" class=" form-control" id="txtCOLABORADORES" placeholder="Enter COLABORADORES">
                 </div>
 
 
                 <div class="form-group">
                     <label for="txtPAIS">PAIS</label>
-                    <input type="text" value="<?php echo $txtPAIS; ?> name="txtPAIS" class="form-control" id="txtPAIS" placeholder="Enter PAIS">
+                    <input type="text" value="<?php echo $txtPAIS; ?>" name=" txtPAIS" class="form-control" id="txtPAIS" placeholder="Enter PAIS">
                 </div>
 
 
                 <div class="form-group">
                     <label for="txtCLASIFICACION">CLASIFICACION</label>
-                    <input type="text" value="<?php echo $txtCLASIFICACION; ?> name="txtCLASIFICACION" class="form-control" id="txtCLASIFICACION" placeholder="Enter CLASIFICACION">
+                    <input type="text" require value="<?php echo $txtCLASIFICACION; ?>" name=" txtCLASIFICACION" class="form-control" id="txtCLASIFICACION" placeholder="Enter CLASIFICACION">
                 </div>
 
 
                 <div class="form-group">
                     <label for="txtLINK">LINK</label>
-                    <input type="text" value="<?php echo $txtLINK; ?> name="txtLINK" class="form-control" id="txtLINK" placeholder="Enter LINK">
+                    <input type="text" value="<?php echo $txtLINK; ?>" name=" txtLINK" class="form-control" id="txtLINK" placeholder="Enter LINK">
                 </div>
 
 
                 <div class="form-group">
                     <label for="txtINSTITUCION">INSTITUCION</label>
-                    <input type="text" value="<?php echo $txtINSTITUCION; ?> name="txtINSTITUCION" class="form-control" id="txtINSTITUCION" placeholder="Enter INSTITUCION">
+                    <input type="text" value="<?php echo $txtINSTITUCION; ?>" name=" txtINSTITUCION" class="form-control" id="txtINSTITUCION" placeholder="Enter INSTITUCION">
                 </div>
 
 
                 <div class="form-group">
                     <label for="arch">Archivo</label>
-                    <?php echo $arch; ?>
+                    
+                    <br>
+
+                    <?php
+                        if($arch!=""){
+                    ?>
+                    <img class="img-thumbnail rounded" src="../../archivos/<?php echo $arch; ?>" width="50" alt="">
+                    <?php } ?>
+
+
                     <input type="file" class="form-control" name="arch" id="arch" placeholder="arch">
                 </div>
 
 
                 <div class="btn-group" role="group" aria-label="">
-                    <button type="submit" name="accion" value="Agregar" class="btn btn-success">Agregar</button>
-                    <button type="submit" name="accion" value="Modificar" class="btn btn-warning">Modificar</button>
-                    <button type="submit" name="accion" value="Cancelar" class="btn btn-info">Cancelar</button>
+                    <button type="submit" name="accion" <?php echo ($accion=="Seleccionar")?"disabled":""; ?> value="Agregar" class="btn btn-success">Agregar</button>
+                    <button type="submit" name="accion" <?php echo ($accion!="Seleccionar")?"disabled":""; ?> value="Modificar" class="btn btn-warning">Modificar</button>
+                    <button type="submit" name="accion" <?php echo ($accion!="Seleccionar")?"disabled":""; ?> value="Cancelar" class="btn btn-info">Cancelar</button>
                 </div>
             </form>
         </div>
@@ -180,7 +292,9 @@ $listaPatentes = $sentenciaSQL->fetchAll(PDO::FETCH_ASSOC);
                     <td><?php echo $patente['clasificacion_p']; ?></td>
                     <td><?php echo $patente['link_p']; ?></td>
                     <td><?php echo $patente['institucion_p']; ?></td>
-                    <td><?php echo $patente['arch_p']; ?></td>
+                    <td>
+                        <img src="../../archivos/<?php echo $patente['arch_p']; ?>" width="50" alt="">
+                        </td>
                     <td>
                         <form method="post">
                             <input type="hidden" name="txtID" id="image.png" value="<?php echo $patente['id_p']; ?>" />
