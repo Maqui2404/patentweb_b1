@@ -36,6 +36,21 @@ switch ($accion) {
         echo "Presionado botón Cancelar";
         break;
     case "Seleccionar":
+        $sentenciaSQL = $conexion->prepare("SELECT * FROM patente_i WHERE id_p=:id_p");
+        $sentenciaSQL->bindParam(':id_p', $txtID);
+        $sentenciaSQL->execute();
+        $patente=$sentenciaSQL->fetch(PDO::FETCH_LAZY);
+
+        $txtDENOMINACION=$patente['denominacion_p'];
+        $txtTITULAR=$patente['titular_p'];
+        $txtCOLABORADORES=$patente['colaboradores_p'];
+        $txtPAIS=$patente['pais_p'];
+        $txtCLASIFICACION=$patente['clasificacion_p'];
+        $txtLINK=$patente['link_p'];
+        $txtINSTITUCION=$patente['institucion_p'];
+        $arch=$patente['arch_p'];
+
+
         //echo "Presionado botón Seleccionar";
         break;
     case "Borrar":
@@ -64,56 +79,59 @@ $listaPatentes = $sentenciaSQL->fetchAll(PDO::FETCH_ASSOC);
 
         <div class="card-body">
             <form method="POST" enctype="multipart/form-data">
+
+
                 <div class="form-group">
                     <label for="txtID">ID</label>
-                    <input type="text" name="txtID" class="form-control" id="txtID" placeholder="Enter ID">
+                    <input type="text" name="txtID" value="<?php echo $txtID; ?>" class="form-control" id="txtID" placeholder="Enter ID">
                 </div>
 
 
                 <div class="form-group">
                     <label for="txtDENOMINACION">DENOMINACION</label>
-                    <input type="text" name="txtDENOMINACION" class="form-control" id="txtDENOMINACION" placeholder="Enter DENOMINACION">
+                    <input type="text" name="txtDENOMINACION" value="<?php echo $txtDENOMINACION; ?> class="form-control" id="txtDENOMINACION" placeholder="Enter DENOMINACION">
                 </div>
 
 
                 <div class="form-group">
                     <label for="txtTITULAR">TITULAR</label>
-                    <input type="text" name="txtTITULAR" class="form-control" id="txtTITULAR" placeholder="Enter TITULAR">
+                    <input type="text" name="txtTITULAR" value="<?php echo $txtTITULAR; ?> class="form-control" id="txtTITULAR" placeholder="Enter TITULAR">
                 </div>
 
 
                 <div class="form-group">
                     <label for="txtCOLABORADORES">COLABORADORES</label>
-                    <input type="text" name="txtCOLABORADORES" class="form-control" id="txtCOLABORADORES" placeholder="Enter COLABORADORES">
+                    <input type="text" name="txtCOLABORADORES" value="<?php echo $txtCOLABORADORES; ?> class="form-control" id="txtCOLABORADORES" placeholder="Enter COLABORADORES">
                 </div>
 
 
                 <div class="form-group">
                     <label for="txtPAIS">PAIS</label>
-                    <input type="text" name="txtPAIS" class="form-control" id="txtPAIS" placeholder="Enter PAIS">
+                    <input type="text" value="<?php echo $txtPAIS; ?> name="txtPAIS" class="form-control" id="txtPAIS" placeholder="Enter PAIS">
                 </div>
 
 
                 <div class="form-group">
                     <label for="txtCLASIFICACION">CLASIFICACION</label>
-                    <input type="text" name="txtCLASIFICACION" class="form-control" id="txtCLASIFICACION" placeholder="Enter CLASIFICACION">
+                    <input type="text" value="<?php echo $txtCLASIFICACION; ?> name="txtCLASIFICACION" class="form-control" id="txtCLASIFICACION" placeholder="Enter CLASIFICACION">
                 </div>
 
 
                 <div class="form-group">
                     <label for="txtLINK">LINK</label>
-                    <input type="text" name="txtLINK" class="form-control" id="txtLINK" placeholder="Enter LINK">
+                    <input type="text" value="<?php echo $txtLINK; ?> name="txtLINK" class="form-control" id="txtLINK" placeholder="Enter LINK">
                 </div>
 
 
                 <div class="form-group">
                     <label for="txtINSTITUCION">INSTITUCION</label>
-                    <input type="text" name="txtINSTITUCION" class="form-control" id="txtINSTITUCION" placeholder="Enter INSTITUCION">
+                    <input type="text" value="<?php echo $txtINSTITUCION; ?> name="txtINSTITUCION" class="form-control" id="txtINSTITUCION" placeholder="Enter INSTITUCION">
                 </div>
 
 
                 <div class="form-group">
                     <label for="arch">Archivo</label>
+                    <?php echo $arch; ?>
                     <input type="file" class="form-control" name="arch" id="arch" placeholder="arch">
                 </div>
 
@@ -164,9 +182,6 @@ $listaPatentes = $sentenciaSQL->fetchAll(PDO::FETCH_ASSOC);
                     <td><?php echo $patente['institucion_p']; ?></td>
                     <td><?php echo $patente['arch_p']; ?></td>
                     <td>
-
-                        Seleccionar | Borrar
-
                         <form method="post">
                             <input type="hidden" name="txtID" id="image.png" value="<?php echo $patente['id_p']; ?>" />
 
